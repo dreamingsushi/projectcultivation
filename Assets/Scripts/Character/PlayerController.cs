@@ -5,7 +5,8 @@ public class PlayerController : MonoBehaviour, IDamagable
 {
     public static PlayerController instance;
 
-    public float health = 100;
+    public float maxHealth = 100;
+    public float currentHealth;
     public float moveSpeed = 5f;
 
     private Vector2 attackDirection = new Vector2(1,0);
@@ -112,6 +113,7 @@ public class PlayerController : MonoBehaviour, IDamagable
             yield return null;
         }
     }
+    
 
     public void PointerDown()
     {
@@ -144,7 +146,7 @@ public class PlayerController : MonoBehaviour, IDamagable
             MushroomEnemy enemy = hit.collider.GetComponent<MushroomEnemy>();
             if (enemy != null)
             {
-                enemy.TakeDamage(1, 30f, new Vector2(1, 0));
+                enemy.TakeDamage(1, 18f, new Vector2(1, 0));
                 Debug.Log("Dealt damage to " + hit.collider.name);
             }
         }
@@ -153,7 +155,7 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     public void TakeDamage(float amount, float knockBackForce, Vector2 damageSourcePosition)
     {
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             Die();
         }
@@ -166,7 +168,7 @@ public class PlayerController : MonoBehaviour, IDamagable
             }
             else
             {
-                health -= amount;
+                currentHealth -= amount;
                 currentState = AnimationState.Hurt;
                 rb.AddForce(damageSourcePosition * knockBackForce, ForceMode2D.Impulse);
             }

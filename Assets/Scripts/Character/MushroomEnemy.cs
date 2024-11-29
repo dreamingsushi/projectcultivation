@@ -95,7 +95,7 @@ public class MushroomEnemy : MonoBehaviour, IDamagable, IEnemy
     {
         if (collision.gameObject.tag == "Player")
         {
-            PlayerController.instance.TakeDamage(1f, 25f, new Vector2(-1, 0));
+            PlayerController.instance.TakeDamage(damageAmount, 25f, new Vector2(-1, 0));
             Debug.Log("Dealt " + 1 + " damage to " + gameObject.name);
         }
     }
