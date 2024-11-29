@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     public float currentHealth;
     public float moveSpeed = 5f;
 
-    private Vector2 attackDirection = new Vector2(1,0);
+    private Vector2 attackDirection = new Vector2(1, 0);
     public float attackForce;
     public float attackDistance;
 
@@ -17,13 +17,13 @@ public class PlayerController : MonoBehaviour, IDamagable
     public LayerMask layerMask;    // The layers that the raycast can hit
     public Color raycastColor = Color.red; // The color of the raycast in the editor
 
-
     [SerializeField] private float originalMoveSpeed;
 
     private bool isAttacking;
     private bool isRunning;
     private bool isGuarding = false;
     private bool isHurt;
+    private bool isDead = false; // Add isDead boolean
 
     private Vector2 originalVelocity;
 
@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     private Animator anim;
     public AnimationState currentState;
 
+    public GameObject deathScreen;
 
     // Define animation states
     public enum AnimationState
@@ -62,7 +63,7 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private IEnumerator PlayerStates()
     {
-        while (true)
+        while (!isDead) // Only update states if not dead
         {
             if (currentState == AnimationState.Run)
             {
@@ -93,7 +94,6 @@ public class PlayerController : MonoBehaviour, IDamagable
                         currentState = AnimationState.Run;
                     }
                 }
-
             }
             else if (currentState == AnimationState.Hurt)
             {
@@ -113,7 +113,6 @@ public class PlayerController : MonoBehaviour, IDamagable
             yield return null;
         }
     }
-    
 
     public void PointerDown()
     {
@@ -152,9 +151,12 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
-
     public void TakeDamage(float amount, float knockBackForce, Vector2 damageSourcePosition)
     {
+        if (isDead) return; // Prevent damage processing if dead
+
+        currentHealth -= amount;
+
         if (currentHealth <= 0)
         {
             Die();
@@ -168,18 +170,18 @@ public class PlayerController : MonoBehaviour, IDamagable
             }
             else
             {
-                currentHealth -= amount;
                 currentState = AnimationState.Hurt;
                 rb.AddForce(damageSourcePosition * knockBackForce, ForceMode2D.Impulse);
             }
-
         }
     }
 
     private void Die()
     {
+        isDead = true; // Set isDead to true
         Debug.Log("Player died");
-        Destroy(gameObject);
+        rb.velocity = Vector2.zero; // Stop player movement
+        anim.Play("Player_Death"); // Play death animation (if available)
+        deathScreen.SetActive(true);
     }
-
 }

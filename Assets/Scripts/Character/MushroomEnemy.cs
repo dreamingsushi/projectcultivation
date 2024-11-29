@@ -25,6 +25,8 @@ public class MushroomEnemy : MonoBehaviour, IDamagable, IEnemy
     private Rigidbody2D rb;
     private Animator anim;
 
+    public killcount killCountScript;
+
     [SerializeField] private AnimationState currentState;
     public enum AnimationState
     {
@@ -36,6 +38,7 @@ public class MushroomEnemy : MonoBehaviour, IDamagable, IEnemy
         damageCollider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        killCountScript = FindAnyObjectByType<killcount>();
         StartCoroutine(EnemyStates());
     }
 
@@ -88,6 +91,8 @@ public class MushroomEnemy : MonoBehaviour, IDamagable, IEnemy
     {
         Debug.Log("Enemy died");
         Destroy(gameObject);
+        killCountScript.killCount++;
+
     }
 
 
